@@ -1,0 +1,5 @@
+# Project exclude paths
+/node_modules
+.DS_Store
+.idea/dictionaries/valentinmarguerie.xml
+controllers/.DS_Store

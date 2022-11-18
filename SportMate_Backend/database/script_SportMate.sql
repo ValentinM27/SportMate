@@ -1,0 +1,83 @@
+DROP SCHEMA SPORTMATE; 
+
+CREATE SCHEMA SPORTMATE;
+USE SPORTMATE;
+
+/* Table utilisateur */
+CREATE TABLE UTILISATEURS (
+	idUser INTEGER PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    BirthdayDate DATE,
+    Sexe ENUM('H', 'F', 'N'),
+    Description VARCHAR(255),
+    PASSWORD VARCHAR(255),
+    Email VARCHAR(125)
+) Engine InnoDB;
+
+/* Table des sports */
+CREATE TABLE SPORT (
+	idSport INTEGER PRIMARY KEY AUTO_INCREMENT,
+    Label VARCHAR(50)
+)Engine innoDB;
+
+/* Table Evenement */
+CREATE TABLE EVENEMENTS (
+	idEvent INTEGER PRIMARY KEY AUTO_INCREMENT,
+    DESCRIPTION_EVENT VARCHAR(255),
+    TypeEvent ENUM('Competition','Entrainement', 'Cours'),
+    PersMin INTEGER,
+    PersMax INTEGER,
+    DateEvent DATE,
+    DateCreation DATE,
+    idUser INTEGER,
+    idSport INTEGER,
+    FOREIGN KEY (idUser) REFERENCES UTILISATEURS(idUser) ON DELETE CASCADE, 
+    FOREIGN KEY (idSport) REFERENCES SPORT(idSport) ON DELETE CASCADE
+)Engine innoDB;
+
+/* Table des commentaires */
+CREATE TABLE COMMENT (
+	idComm INTEGER PRIMARY KEY AUTO_INCREMENT,
+    CommentContent VARCHAR(255),
+    idCreatorCom INTEGER,
+    idEvent INTEGER,
+    FOREIGN KEY (idCreatorCom) REFERENCES UTILISATEURS(idUser) ON DELETE CASCADE,
+    FOREIGN KEY (idEvent) REFERENCES EVENEMENTS(idEvent) ON DELETE CASCADE
+)Engine innoDB;
+
+DROP TABLE AMIS;
+/* Table Amis */
+CREATE TABLE AMIS (
+	idFriendShip INTEGER PRIMARY KEY AUTO_INCREMENT,
+	InitBy INTEGER,
+    User2 INTEGER,
+	FOREIGN KEY (InitBy) REFERENCES UTILISATEURS(idUser) ON DELETE CASCADE,
+    FOREIGN KEY (User2) REFERENCES UTILISATEURS(idUser) ON DELETE CASCADE,
+    IsValided BOOLEAN
+)Engine innoDB;
+
+/* Liaison Pratique (User - Sport) */
+CREATE TABLE PRATIQUE (
+	idUser INTEGER,
+    idSport INTEGER,
+	FOREIGN KEY (idUser) REFERENCES UTILISATEURS(idUser) ON DELETE CASCADE,
+    FOREIGN KEY (idSport) REFERENCES SPORT(idSport) ON DELETE CASCADE,
+    PRIMARY KEY(idUser, idSport)
+)Engine innoDB;
+
+/* Liaison participe (User - Event) */
+CREATE TABLE PARTICIPE(
+	idUser INTEGER,
+    idEvent INTEGER,
+	FOREIGN KEY (idUser) REFERENCES UTILISATEURS(idUser)ON DELETE CASCADE,
+    FOREIGN KEY (idEvent) REFERENCES EVENEMENTS(idEvent) ON DELETE CASCADE,
+    PRIMARY KEY (idUser, idEvent)
+)Engine innoDB;
+
+CREATE TABLE RESETPASSWORD(
+    idReset INTEGER PRIMARY KEY AUTO_INCREMENT,
+    userEmail VARCHAR(125),
+    resetTOKEN VARCHAR(255),
+    expirationDate DATE
+)Engine innoDB;

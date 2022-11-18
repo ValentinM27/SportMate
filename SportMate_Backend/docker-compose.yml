@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - "9670:9670"
+    volumes:
+      - ./:/usr/src/app
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - sportMate
+  database:
+    # CHANGER L'IMAGE POUR DU x86\
+    platform: linux/x86_64
+
+    image: mysql:5.7-oracle
+    restart: unless-stopped
+    container_name: sportmate-database
+    environment:
+      MYSQL_ROOT_PASSWORD: f2-N+grA4qJ3%b2y
+      MYSQL_DATABASE: 'SPORTMATE'
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3306"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - sportMate
+
+networks:
+  sportMate:
+    driver: bridge
